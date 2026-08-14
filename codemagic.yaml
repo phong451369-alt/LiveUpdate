@@ -1,20 +1,10 @@
 workflows:
   android-build:
-    name: Build Android APK
-    max_build_duration: 30
+    name: Check Repo Contents
+    max_build_duration: 10
     instance_type: mac_mini_m1
     scripts:
-      - name: Extract zip and build
+      - name: List files
         script: |
-          # Giải nén tất cả file zip trong repo
-          unzip -o "*.zip"
-          
-          # Tìm thư mục chứa build.gradle và chui vào đó
-          BUILD_DIR=$(dirname $(find . -name "build.gradle" | head -n 1))
-          cd "$BUILD_DIR"
-          
-          # Cấp quyền và build
-          chmod +x gradlew || true
-          gradle assembleDebug
-    artifacts:
-      - /**/build/outputs/apk/**/*.apk
+          echo "=== Danh sách file trong Repo ==="
+          find . -maxdepth 3 -not -path '*/.*'
