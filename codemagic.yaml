@@ -4,11 +4,17 @@ workflows:
     max_build_duration: 30
     instance_type: mac_mini_m1
     scripts:
-      - name: Set Android SDK
+      - name: Extract zip and build
         script: |
-          echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
-      - name: Build Android APK
-        script: |
+          # Giải nén tất cả file zip trong repo
+          unzip -o "*.zip"
+          
+          # Tìm thư mục chứa build.gradle và chui vào đó
+          BUILD_DIR=$(dirname $(find . -name "build.gradle" | head -n 1))
+          cd "$BUILD_DIR"
+          
+          # Cấp quyền và build
+          chmod +x gradlew || true
           gradle assembleDebug
     artifacts:
-      - app/build/outputs/apk/**/*.apk
+      - /**/build/outputs/apk/**/*.apk
