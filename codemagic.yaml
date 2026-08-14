@@ -6,15 +6,18 @@ workflows:
     scripts:
       - name: Unzip and Build
         script: |
-          # 解压/Giải nén tất cả file zip
+          # Giải nén file zip
           unzip -o "*.zip"
           
-          # Tự động tìm thư mục chứa file build.gradle hoặc gradlew
+          # Tự động tìm và chui vào thư mục chứa source code vừa giải nén
+          cd LiveUpdate-3.0.1 || cd $(find . -maxdepth 2 -type d | grep -v '^\.$' | head -n 1)
+          
+          # Tìm thư mục thực tế có chứa build.gradle
           BUILD_DIR=$(dirname $(find . -name "build.gradle" -o -name "build.gradle.kts" | head -n 1))
           echo "Found build directory: $BUILD_DIR"
           cd "$BUILD_DIR"
           
-          # Cấp quyền cho gradlew nếu có, rồi chạy build
+          # Cấp quyền và build
           chmod +x gradlew || true
           if [ -f "./gradlew" ]; then
             ./gradlew assembleDebug
